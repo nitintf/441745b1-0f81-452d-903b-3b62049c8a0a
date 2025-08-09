@@ -15,13 +15,15 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { data } = useQuery(
+const queryOptions = computed(() => 
 	deviceSavingsQueryOptions(
 		props.selectedDevice,
 		props.startDate,
 		props.endDate,
-	),
+	)
 );
+
+const { data } = useQuery(queryOptions);
 
 const totalCarbonSavings = computed(
 	() => data.value?.totals.totalCarbonSavings || 0,

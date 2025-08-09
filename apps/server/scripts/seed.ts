@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, createReadStream } from "node:fs";
 import { join } from "node:path";
 
 import { count } from "drizzle-orm";
+import csv from "csv-parser";
 
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
@@ -18,37 +19,15 @@ const main = async () => {
 };
 
 async function importFromCSV() {
-	const parseCSV = (content: string) => {
-		return content
-			.trim()
-			.split("\n")
-			.map((line) => {
-				const result = [];
-				let current = "";
-				let inQuotes = false;
-
-				for (let i = 0; i < line.length; i++) {
-					const char = line[i];
-
-					if (char === '"' && (i === 0 || line[i - 1] === ",")) {
-						inQuotes = true;
-					} else if (
-						char === '"' &&
-						inQuotes &&
-						(i === line.length - 1 || line[i + 1] === ",")
-					) {
-						inQuotes = false;
-					} else if (char === "," && !inQuotes) {
-						result.push(current.trim());
-						current = "";
-					} else {
-						current += char;
-					}
-				}
-
-				result.push(current.trim());
-				return result;
-			});
+	const parseCSV = async (filePath: string) => {
+		const results: any[] = [];
+		return new Promise<any[]>((resolve, reject) => {
+			createReadStream(filePath)
+				.pipe(csv())
+				.on('data', (data) => results.push(data))
+				.on('end', () => resolve(results))
+				.on('error', (error) => reject(error));
+		});
 	};
 
 	const [devicesCount] = await db
@@ -56,18 +35,13 @@ async function importFromCSV() {
 		.from(schema.devices);
 
 	if (devicesCount.count === 0) {
-		const devicesContent = readFileSync(
-			join(process.cwd(), "data", "devices.csv"),
-			"utf8",
-		);
-		const devicesRows = parseCSV(devicesContent);
+		const devicesPath = join(process.cwd(), "data", "devices.csv");
+		const devicesRows = await parseCSV(devicesPath);
 
-		const [, ...deviceDataRows] = devicesRows;
-
-		const devicesData = deviceDataRows.map(([id, name, timezone]) => ({
-			id: Number.parseInt(id),
-			name,
-			timezone,
+		const devicesData = devicesRows.map((row) => ({
+			id: Number.parseInt(row.id),
+			name: row.name,
+			timezone: row.timezone
 		}));
 
 		await db.insert(schema.devices).values(devicesData);
@@ -79,21 +53,15 @@ async function importFromCSV() {
 		.from(schema.deviceSaving);
 
 	if (savingsCount.count === 0) {
-		const savingContent = readFileSync(
-			join(process.cwd(), "data", "device-saving.csv"),
-			"utf8",
-		);
+		const savingPath = join(process.cwd(), "data", "device-saving.csv");
+		const savingRows = await parseCSV(savingPath);
 
-		const savingRows = parseCSV(savingContent);
-		const [, ...savingDataRows] = savingRows;
-
-		const savingData = savingDataRows.map(
-			([deviceId, timestamp, deviceTimestamp, carbonSaved, fuelSaved]) => ({
-				deviceId: Number.parseInt(deviceId),
-				timestamp,
-				deviceTimestamp,
-				carbonSaved: Number.parseFloat(carbonSaved),
-				fuelSaved: Number.parseFloat(fuelSaved),
+		const savingData = savingRows.map((row) => ({
+				deviceId: Number.parseInt(row.device_id),
+			timestamp: row.timestamp,
+			deviceTimestamp: row.device_timestamp,
+			carbonSaved: Number.parseFloat(row.carbon_saved),
+			fuelSaved: Number.parseFloat(row.fueld_saved),
 			}),
 		);
 

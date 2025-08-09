@@ -1,8 +1,7 @@
 <template>
   <div class="w-full overflow-hidden">
-    <div ref="chartRef" :style="{ height: `${chartHeight}px`, width: '100%' }"></div>
+    <div ref="chartRef" :style="{ height: `${chartHeight}px`, width: '100%' }" :class="{ 'opacity-50': loading }"></div>
     
-    <!-- Chart Legend -->
     <div class="flex items-center justify-center gap-6 mt-4">
       <div class="flex items-center gap-2">
         <div class="w-4 h-4 bg-carbon-savings rounded"></div>
@@ -13,12 +12,46 @@
         <span class="text-sm text-muted-foreground">Diesel savings</span>
       </div>
     </div>
+    
+    <div class="flex items-center justify-center mt-4 gap-4">
+      <p v-if="seconds <= 0" class="text-sm text-muted-foreground">
+        <small>Loaded.</small>
+      </p>
+      <p v-else class="text-sm text-muted-foreground">
+        <small>
+          Data coming in
+          <b>{{ seconds }}</b>
+          second{{ seconds > 1 ? "s" : "" }}...
+        </small>
+      </p>
+      <div class="actions">
+        <button 
+          @click="refresh" 
+          :disabled="seconds > 0"
+          class="px-4 py-2 border rounded text-sm transition-colors bg-background text-foreground border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Refresh
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { use } from "echarts/core";
+import { BarChart } from "echarts/charts";
+import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
 import * as echarts from "echarts";
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onMounted, onBeforeUnmount, ref, watch, shallowRef } from "vue";
+
+use([
+  BarChart,
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+  CanvasRenderer
+]);
 
 interface ChartDataPoint {
 	month: string;
@@ -38,20 +71,30 @@ const props = withDefaults(defineProps<Props>(), {
 const chartRef = ref<HTMLElement>();
 let chartInstance: echarts.ECharts | null = null;
 
+const loading = shallowRef(false);
+
+const seconds = shallowRef(0);
+let timer: ReturnType<typeof setInterval> | undefined = undefined;
+
+onBeforeUnmount(() => {
+  if (timer !== undefined) {
+    clearInterval(timer);
+  }
+});
+
 const initChart = async () => {
 	await nextTick();
 
 	if (!chartRef.value) return;
 
-	// Dispose existing chart instance
 	if (chartInstance) {
 		chartInstance.dispose();
 	}
 
 	chartInstance = echarts.init(chartRef.value);
 
-	const carbonColor = "oklch(0.646 0.222 162.48)"; // Teal/turquoise color from image
-	const dieselColor = "oklch(0.6 0.222 264.376)"; // Blue/purple color from image
+	const carbonColor = "oklch(0.65 0.19 180)";
+	const dieselColor = "oklch(0.6 0.25 260)";
 
 	const option = {
 		grid: {
@@ -142,6 +185,11 @@ const initChart = async () => {
 					color: carbonColor,
 					borderRadius: [4, 4, 0, 0],
 				},
+                emphasis: {
+                    itemStyle: {
+                        color: carbonColor
+                    }
+                },
 				barWidth: "20%",
 				barGap: "5%",
 			},
@@ -154,13 +202,18 @@ const initChart = async () => {
 					color: dieselColor,
 					borderRadius: [4, 4, 0, 0],
 				},
+                emphasis: {
+                    itemStyle: {
+                        color: dieselColor
+                    }
+                },
 				barWidth: "20%",
 			},
 		],
 		tooltip: {
 			trigger: "axis",
 			axisPointer: {
-				type: "shadow",
+				type: "line",
 			},
 			backgroundColor: "rgba(255, 255, 255, 0.95)",
 			borderColor: "#e0e0e0",
@@ -194,12 +247,11 @@ const initChart = async () => {
 		},
 		animation: true,
 		animationDuration: 800,
-		animationEasing: "cubicOut",
+		animationEasing: "cubicOut" as const,
 	};
 
 	chartInstance.setOption(option);
 
-	// Handle window resize
 	const handleResize = () => {
 		chartInstance?.resize();
 	};
@@ -210,6 +262,26 @@ const initChart = async () => {
 		window.removeEventListener("resize", handleResize);
 	};
 };
+
+function tick() {
+	seconds.value--;
+
+	if (seconds.value === 0) {
+		clearInterval(timer);
+		loading.value = false;
+		initChart();
+	}
+}
+
+function refresh() {
+	seconds.value = 3;
+	loading.value = true;
+
+	if (timer !== undefined) {
+		clearInterval(timer);
+	}
+	timer = window.setInterval(tick, 1000);
+}
 
 onMounted(() => {
 	initChart();
