@@ -1,0 +1,37 @@
+{
+	"name": "server",
+	"type": "module",
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"build": "tsc",
+		"start": "node dist/index.js",
+		"check-types": "tsc --noEmit",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:seed": "tsx scripts/seed.ts",
+		"db:reset": "tsx scripts/reset.ts"
+	},
+	"dependencies": {
+		"@hono/node-server": "^1.18.1",
+		"@hono/zod-validator": "^0.7.2",
+		"@scalar/hono-api-reference": "^0.9.13",
+		"better-sqlite3": "^12.2.0",
+		"dotenv": "^17.2.1",
+		"drizzle-orm": "^0.44.4",
+		"hono": "^4.9.0",
+		"hono-openapi": "^0.4.8",
+		"zod": "^3.23.8",
+		"zod-openapi": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.13",
+		"@types/node": "^20.11.17",
+		"drizzle-kit": "^0.31.4",
+		"drizzle-seed": "^0.3.1",
+		"tsdown": "^0.13.4",
+		"tsx": "^4.7.1",
+		"typescript": "^5.8.3"
+	}
+}
