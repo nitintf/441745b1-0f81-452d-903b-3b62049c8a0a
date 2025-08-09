@@ -7,7 +7,7 @@ import { commonErrorResponses } from "@/schemas/common";
 
 type CommonErrorCode = "400" | "404" | "500";
 
-interface CustomRouteConfig extends DescribeRouteOptions {
+export interface CustomRouteConfig extends DescribeRouteOptions {
 	includeCommonErrors?: CommonErrorCode[];
 }
 

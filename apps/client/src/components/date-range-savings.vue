@@ -15,12 +15,12 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const queryOptions = computed(() => 
+const queryOptions = computed(() =>
 	deviceSavingsQueryOptions(
 		props.selectedDevice,
 		props.startDate,
 		props.endDate,
-	)
+	),
 );
 
 const { data } = useQuery(queryOptions);

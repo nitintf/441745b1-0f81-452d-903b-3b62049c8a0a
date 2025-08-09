@@ -1,8 +1,8 @@
-import { existsSync, createReadStream } from "node:fs";
+import { createReadStream, existsSync } from "node:fs";
 import { join } from "node:path";
 
-import { count } from "drizzle-orm";
 import csv from "csv-parser";
+import { count } from "drizzle-orm";
 
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
@@ -24,9 +24,9 @@ async function importFromCSV() {
 		return new Promise<any[]>((resolve, reject) => {
 			createReadStream(filePath)
 				.pipe(csv())
-				.on('data', (data) => results.push(data))
-				.on('end', () => resolve(results))
-				.on('error', (error) => reject(error));
+				.on("data", (data) => results.push(data))
+				.on("end", () => resolve(results))
+				.on("error", (error) => reject(error));
 		});
 	};
 
@@ -41,7 +41,7 @@ async function importFromCSV() {
 		const devicesData = devicesRows.map((row) => ({
 			id: Number.parseInt(row.id),
 			name: row.name,
-			timezone: row.timezone
+			timezone: row.timezone,
 		}));
 
 		await db.insert(schema.devices).values(devicesData);
@@ -57,13 +57,12 @@ async function importFromCSV() {
 		const savingRows = await parseCSV(savingPath);
 
 		const savingData = savingRows.map((row) => ({
-				deviceId: Number.parseInt(row.device_id),
+			deviceId: Number.parseInt(row.device_id),
 			timestamp: row.timestamp,
 			deviceTimestamp: row.device_timestamp,
 			carbonSaved: Number.parseFloat(row.carbon_saved),
 			fuelSaved: Number.parseFloat(row.fueld_saved),
-			}),
-		);
+		}));
 
 		for (let i = 0; i < savingData.length; i += BATCH_SIZE) {
 			const batch = savingData.slice(i, i + BATCH_SIZE);

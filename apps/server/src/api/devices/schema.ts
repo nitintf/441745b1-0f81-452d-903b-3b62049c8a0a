@@ -15,5 +15,16 @@ export const DeviceSavingSchema = z.object({
 	fuelSaved: z.number(),
 });
 
+export const SavingsQuerySchema = z.object({
+	startDate: z
+		.string()
+		.optional()
+		.describe("Filter savings from this date (ISO format)"),
+	endDate: z
+		.string()
+		.optional()
+		.describe("Filter savings until this date (ISO format)"),
+});
+
 export type Device = z.infer<typeof DeviceSchema>;
 export type DeviceSaving = z.infer<typeof DeviceSavingSchema>;

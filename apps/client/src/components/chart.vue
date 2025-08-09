@@ -38,19 +38,30 @@
 </template>
 
 <script setup lang="ts">
-import { use } from "echarts/core";
-import { BarChart } from "echarts/charts";
-import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
-import { CanvasRenderer } from "echarts/renderers";
 import * as echarts from "echarts";
-import { nextTick, onMounted, onBeforeUnmount, ref, watch, shallowRef } from "vue";
+import { BarChart } from "echarts/charts";
+import {
+	GridComponent,
+	LegendComponent,
+	TooltipComponent,
+} from "echarts/components";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import {
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	shallowRef,
+	watch,
+} from "vue";
 
 use([
-  BarChart,
-  GridComponent,
-  TooltipComponent,
-  LegendComponent,
-  CanvasRenderer
+	BarChart,
+	GridComponent,
+	TooltipComponent,
+	LegendComponent,
+	CanvasRenderer,
 ]);
 
 interface ChartDataPoint {
@@ -74,12 +85,12 @@ let chartInstance: echarts.ECharts | null = null;
 const loading = shallowRef(false);
 
 const seconds = shallowRef(0);
-let timer: ReturnType<typeof setInterval> | undefined = undefined;
+let timer: ReturnType<typeof setInterval> | undefined;
 
 onBeforeUnmount(() => {
-  if (timer !== undefined) {
-    clearInterval(timer);
-  }
+	if (timer !== undefined) {
+		clearInterval(timer);
+	}
 });
 
 const initChart = async () => {
@@ -185,11 +196,11 @@ const initChart = async () => {
 					color: carbonColor,
 					borderRadius: [4, 4, 0, 0],
 				},
-                emphasis: {
-                    itemStyle: {
-                        color: carbonColor
-                    }
-                },
+				emphasis: {
+					itemStyle: {
+						color: carbonColor,
+					},
+				},
 				barWidth: "20%",
 				barGap: "5%",
 			},
@@ -202,11 +213,11 @@ const initChart = async () => {
 					color: dieselColor,
 					borderRadius: [4, 4, 0, 0],
 				},
-                emphasis: {
-                    itemStyle: {
-                        color: dieselColor
-                    }
-                },
+				emphasis: {
+					itemStyle: {
+						color: dieselColor,
+					},
+				},
 				barWidth: "20%",
 			},
 		],

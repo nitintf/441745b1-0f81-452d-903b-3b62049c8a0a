@@ -7,19 +7,16 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!**/dist", "!**/.turbo", "!**/.vscode", "!**/.nuxt"]
+		"includes": [
+			"**",
+			"!**/dist",
+			"!**/.turbo",
+			"!**/.vscode",
+			"!**/.nuxt",
+			"!**/apps/client/**",
+			"!**/apps/server/scripts/**"
+		]
 	},
-	"overrides": [
-		{
-			"includes": ["*.vue"],
-			"formatter": {
-				"enabled": false
-			},
-			"linter": {
-				"enabled": false
-			}
-		}
-	],
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
