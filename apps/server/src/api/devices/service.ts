@@ -1,11 +1,9 @@
-import type { CreateDevice, UpdateDevice } from "./schema";
+import { HTTPException } from "hono/http-exception";
 
 import {
-	dbCreateDevice,
-	dbDeleteDevice,
 	dbFindAllDevices,
 	dbFindDeviceById,
-	dbUpdateDevice,
+	dbFindDeviceSavingsByDeviceId,
 } from "./repository";
 
 export async function getAllDevices() {
@@ -14,28 +12,20 @@ export async function getAllDevices() {
 
 export async function getDeviceById(id: number) {
 	const device = await dbFindDeviceById(id);
+
 	if (!device) {
-		throw new Error("Device not found");
+		throw new HTTPException(404, {
+			message: "Device not found",
+		});
 	}
+
 	return device;
 }
 
-export async function createDevice(data: CreateDevice) {
-	return await dbCreateDevice(data);
-}
-
-export async function updateDevice(id: number, data: UpdateDevice) {
-	const device = await dbFindDeviceById(id);
-	if (!device) {
-		throw new Error("Device not found");
-	}
-	return await dbUpdateDevice(id, data);
-}
-
-export async function deleteDevice(id: number) {
-	const device = await dbFindDeviceById(id);
-	if (!device) {
-		throw new Error("Device not found");
-	}
-	return await dbDeleteDevice(id);
+export async function getSavingsByDeviceId(
+	deviceId: number,
+	startDate?: string,
+	endDate?: string,
+) {
+	return await dbFindDeviceSavingsByDeviceId(deviceId, startDate, endDate);
 }

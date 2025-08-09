@@ -5,7 +5,6 @@ import { z } from "zod";
 import { config } from "@/config";
 import { describeRoute } from "@/utils/route";
 
-import { deviceSavingRouter } from "./device-saving/api";
 import { devicesRouter } from "./devices/api";
 
 const StatusResponse = z.object({
@@ -48,4 +47,3 @@ baseRouter.get(
 );
 
 baseRouter.route("/devices", devicesRouter);
-baseRouter.route("/device-saving", deviceSavingRouter);

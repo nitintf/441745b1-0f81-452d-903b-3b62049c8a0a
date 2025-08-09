@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 
 import { db } from "@/db";
-import { devices } from "@/db/schema";
+import { deviceSaving, devices } from "@/db/schema";
 
 export async function dbFindAllDevices() {
 	return await db.select().from(devices);
@@ -12,27 +12,24 @@ export async function dbFindDeviceById(id: number) {
 	return device;
 }
 
-export async function dbCreateDevice(data: typeof devices.$inferInsert) {
-	const [device] = await db.insert(devices).values(data).returning();
-	return device;
-}
-
-export async function dbUpdateDevice(
-	id: number,
-	data: Partial<typeof devices.$inferInsert>,
+export async function dbFindDeviceSavingsByDeviceId(
+	deviceId: number,
+	startDate?: string,
+	endDate?: string,
 ) {
-	const [device] = await db
-		.update(devices)
-		.set(data)
-		.where(eq(devices.id, id))
-		.returning();
-	return device;
-}
+	const conditions = [eq(deviceSaving.deviceId, deviceId)];
 
-export async function dbDeleteDevice(id: number) {
-	const [device] = await db
-		.delete(devices)
-		.where(eq(devices.id, id))
-		.returning();
-	return device;
+	if (startDate) {
+		conditions.push(gte(deviceSaving.timestamp, startDate));
+	}
+
+	if (endDate) {
+		conditions.push(lte(deviceSaving.timestamp, endDate));
+	}
+
+	return await db
+		.select()
+		.from(deviceSaving)
+		.where(and(...conditions))
+		.orderBy(desc(deviceSaving.timestamp));
 }

@@ -4,14 +4,8 @@ import { z } from "zod";
 
 import { describeRoute } from "@/utils/route";
 
-import { CreateDeviceSchema, DeviceSchema, UpdateDeviceSchema } from "./schema";
-import {
-	createDevice,
-	deleteDevice,
-	getAllDevices,
-	getDeviceById,
-	updateDevice,
-} from "./service";
+import { DeviceSavingSchema, DeviceSchema } from "./schema";
+import { getAllDevices, getDeviceById, getSavingsByDeviceId } from "./service";
 
 export const devicesRouter = new Hono();
 
@@ -67,48 +61,34 @@ devicesRouter.get(
 	},
 );
 
-devicesRouter.post(
-	"/",
+devicesRouter.get(
+	"/:deviceId/savings",
 	describeRoute({
-		tags: ["Devices"],
-		summary: "Create a new device",
-		description: "Create a new device with name and timezone",
-		responses: {
-			201: {
-				description: "Device created successfully",
-				content: {
-					"application/json": {
-						schema: resolver(DeviceSchema),
-					},
-				},
+		tags: ["Device Savings"],
+		summary: "Get savings by device ID",
+		description: "Retrieve all saving records for a specific device",
+		parameters: [
+			{
+				in: "query",
+				name: "startDate",
+				schema: { type: "string", format: "date-time" },
+				required: false,
+				description: "Filter savings from this date (ISO format)",
 			},
-		},
-		includeCommonErrors: ["400"],
-	}),
-	async (c) => {
-		try {
-			const body = await c.req.json();
-			const data = CreateDeviceSchema.parse(body);
-			const device = await createDevice(data);
-			return c.json(device, 201);
-		} catch (error) {
-			return c.json({ error: (error as Error).message }, 400);
-		}
-	},
-);
-
-devicesRouter.put(
-	"/:id",
-	describeRoute({
-		tags: ["Devices"],
-		summary: "Update device",
-		description: "Update an existing device",
+			{
+				in: "query",
+				name: "endDate",
+				schema: { type: "string", format: "date-time" },
+				required: false,
+				description: "Filter savings until this date (ISO format)",
+			},
+		],
 		responses: {
 			200: {
-				description: "Device updated successfully",
+				description: "List of device saving records for the device",
 				content: {
 					"application/json": {
-						schema: resolver(DeviceSchema),
+						schema: resolver(z.array(DeviceSavingSchema)),
 					},
 				},
 			},
@@ -116,43 +96,10 @@ devicesRouter.put(
 		includeCommonErrors: ["400", "404"],
 	}),
 	async (c) => {
-		try {
-			const id = Number(c.req.param("id"));
-			const body = await c.req.json();
-			const data = UpdateDeviceSchema.parse(body);
-			const device = await updateDevice(id, data);
-			return c.json(device);
-		} catch (error) {
-			return c.json({ error: (error as Error).message }, 404);
-		}
-	},
-);
-
-devicesRouter.delete(
-	"/:id",
-	describeRoute({
-		tags: ["Devices"],
-		summary: "Delete device",
-		description: "Delete an existing device",
-		responses: {
-			200: {
-				description: "Device deleted successfully",
-				content: {
-					"application/json": {
-						schema: resolver(DeviceSchema),
-					},
-				},
-			},
-		},
-		includeCommonErrors: ["400", "404"],
-	}),
-	async (c) => {
-		try {
-			const id = Number(c.req.param("id"));
-			const device = await deleteDevice(id);
-			return c.json(device);
-		} catch (error) {
-			return c.json({ error: (error as Error).message }, 404);
-		}
+		const deviceId = Number(c.req.param("deviceId"));
+		const startDate = c.req.query("startDate");
+		const endDate = c.req.query("endDate");
+		const savings = await getSavingsByDeviceId(deviceId, startDate, endDate);
+		return c.json(savings);
 	},
 );

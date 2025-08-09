@@ -9,6 +9,17 @@
 		"ignoreUnknown": false,
 		"includes": ["**", "!**/dist", "!**/.turbo", "!**/.vscode", "!**/.nuxt"]
 	},
+	"overrides": [
+		{
+			"includes": ["*.vue"],
+			"formatter": {
+				"enabled": false
+			},
+			"linter": {
+				"enabled": false
+			}
+		}
+	],
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",

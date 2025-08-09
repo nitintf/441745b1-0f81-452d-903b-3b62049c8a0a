@@ -18,11 +18,38 @@ const main = async () => {
 };
 
 async function importFromCSV() {
-	const parseCSV = (content: string) =>
-		content
+	const parseCSV = (content: string) => {
+		return content
 			.trim()
 			.split("\n")
-			.map((line) => line.split(",").map((cell) => cell.trim()));
+			.map((line) => {
+				const result = [];
+				let current = "";
+				let inQuotes = false;
+
+				for (let i = 0; i < line.length; i++) {
+					const char = line[i];
+
+					if (char === '"' && (i === 0 || line[i - 1] === ",")) {
+						inQuotes = true;
+					} else if (
+						char === '"' &&
+						inQuotes &&
+						(i === line.length - 1 || line[i + 1] === ",")
+					) {
+						inQuotes = false;
+					} else if (char === "," && !inQuotes) {
+						result.push(current.trim());
+						current = "";
+					} else {
+						current += char;
+					}
+				}
+
+				result.push(current.trim());
+				return result;
+			});
+	};
 
 	const [devicesCount] = await db
 		.select({ count: count() })
