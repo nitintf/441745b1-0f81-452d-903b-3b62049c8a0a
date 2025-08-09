@@ -1,6 +1,6 @@
 <template>
   <div class="w-full overflow-hidden">
-    <div ref="chartRef" :style="{ height: `${chartHeight}px`, width: '100%' }" :class="{ 'opacity-50': loading }"></div>
+    <div ref="chartRef" :style="{ height: `${chartHeight}px`, width: '100%' }"></div>
     
     <div class="flex items-center justify-center gap-6 mt-4">
       <div class="flex items-center gap-2">
@@ -13,27 +13,6 @@
       </div>
     </div>
     
-    <div class="flex items-center justify-center mt-4 gap-4">
-      <p v-if="seconds <= 0" class="text-sm text-muted-foreground">
-        <small>Loaded.</small>
-      </p>
-      <p v-else class="text-sm text-muted-foreground">
-        <small>
-          Data coming in
-          <b>{{ seconds }}</b>
-          second{{ seconds > 1 ? "s" : "" }}...
-        </small>
-      </p>
-      <div class="actions">
-        <button 
-          @click="refresh" 
-          :disabled="seconds > 0"
-          class="px-4 py-2 border rounded text-sm transition-colors bg-background text-foreground border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Refresh
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -49,10 +28,8 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import {
 	nextTick,
-	onBeforeUnmount,
 	onMounted,
 	ref,
-	shallowRef,
 	watch,
 } from "vue";
 
@@ -81,17 +58,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chartRef = ref<HTMLElement>();
 let chartInstance: echarts.ECharts | null = null;
-
-const loading = shallowRef(false);
-
-const seconds = shallowRef(0);
-let timer: ReturnType<typeof setInterval> | undefined;
-
-onBeforeUnmount(() => {
-	if (timer !== undefined) {
-		clearInterval(timer);
-	}
-});
 
 const initChart = async () => {
 	await nextTick();
@@ -274,25 +240,6 @@ const initChart = async () => {
 	};
 };
 
-function tick() {
-	seconds.value--;
-
-	if (seconds.value === 0) {
-		clearInterval(timer);
-		loading.value = false;
-		initChart();
-	}
-}
-
-function refresh() {
-	seconds.value = 3;
-	loading.value = true;
-
-	if (timer !== undefined) {
-		clearInterval(timer);
-	}
-	timer = window.setInterval(tick, 1000);
-}
 
 onMounted(() => {
 	initChart();
