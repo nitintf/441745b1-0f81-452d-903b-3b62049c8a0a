@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const DeviceSchema = z.object({
+export const deviceSchema = z.object({
 	id: z.number(),
 	name: z.string(),
 	timezone: z.string(),
 });
 
-export const DeviceSavingSchema = z.object({
+export const deviceSavingSchema = z.object({
 	id: z.number(),
 	deviceId: z.number(),
 	timestamp: z.string(),
@@ -15,7 +15,7 @@ export const DeviceSavingSchema = z.object({
 	fuelSaved: z.number(),
 });
 
-export const SavingsQuerySchema = z.object({
+export const savingsQuerySchema = z.object({
 	startDate: z
 		.string()
 		.optional()
@@ -26,5 +26,11 @@ export const SavingsQuerySchema = z.object({
 		.describe("Filter savings until this date (ISO format)"),
 });
 
-export type Device = z.infer<typeof DeviceSchema>;
-export type DeviceSaving = z.infer<typeof DeviceSavingSchema>;
+export const savingsParamSchema = z.object({
+	deviceId: z.string().transform(Number),
+});
+
+export type Device = z.infer<typeof deviceSchema>;
+export type DeviceSaving = z.infer<typeof deviceSavingSchema>;
+export type SavingsQuery = z.infer<typeof savingsQuerySchema>;
+export type SavingsParam = z.infer<typeof savingsParamSchema>;

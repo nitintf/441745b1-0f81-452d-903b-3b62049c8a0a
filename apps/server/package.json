@@ -19,6 +19,7 @@
 		"@scalar/hono-api-reference": "^0.9.13",
 		"better-sqlite3": "^12.2.0",
 		"csv-parser": "^3.2.0",
+		"date-fns": "^4.1.0",
 		"dotenv": "^17.2.1",
 		"drizzle-orm": "^0.44.4",
 		"hono": "^4.9.0",

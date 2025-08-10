@@ -29,12 +29,6 @@ importers:
 
   apps/client:
     dependencies:
-      '@internationalized/date':
-        specifier: ^3.8.2
-        version: 3.8.2
-      '@primevue/icons':
-        specifier: ^4.3.7
-        version: 4.3.7(vue@3.5.18(typescript@5.8.3))
       '@tailwindcss/vite':
         specifier: ^4.1.11
         version: 4.1.11(vite@5.4.11(@types/node@18.19.0)(lightningcss@1.30.1)(terser@5.43.1))
@@ -47,9 +41,6 @@ importers:
       axios:
         specifier: ^1.11.0
         version: 1.11.0
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -62,9 +53,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      lucide-vue-next:
-        specifier: ^0.539.0
-        version: 0.539.0(vue@3.5.18(typescript@5.8.3))
       primevue:
         specifier: ^4.3.7
         version: 4.3.7(vue@3.5.18(typescript@5.8.3))
@@ -132,6 +120,9 @@ importers:
       csv-parser:
         specifier: ^3.2.0
         version: 3.2.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
@@ -837,9 +828,6 @@ packages:
       hono: '>=3.9.0'
       zod: ^3.25.0 || ^4.0.0
 
-  '@internationalized/date@3.8.2':
-    resolution: {integrity: sha512-/wENk7CbvLbkUvX1tu0mwq49CVkkWpkXubGel6birjRPyo6uQ4nQpnq5xZu823zRCwwn82zgHrvgF1vZyvmVgA==}
-
   '@isaacs/fs-minipass@4.0.1':
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
     engines: {node: '>=18.0.0'}
@@ -1106,9 +1094,6 @@ packages:
   '@sindresorhus/merge-streams@4.0.0':
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
-
-  '@swc/helpers@0.5.17':
-    resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
 
   '@tailwindcss/node@4.1.11':
     resolution: {integrity: sha512-yzhzuGRmv5QyU9qLNg4GTlYI6STedBWRE7NjxP45CsFYYq9taI0zJXZBMqIC/c8fViNLhmrbpSFS57EoxUmD6Q==}
@@ -1450,9 +1435,6 @@ packages:
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
-
-  class-variance-authority@0.7.1:
-    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
 
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
@@ -2095,11 +2077,6 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
-
-  lucide-vue-next@0.539.0:
-    resolution: {integrity: sha512-8Y75ekxsBqW+9YZPCbxE6KXoCbNmJYUujKP+nK2cIqmONJXvUSeyroEW4DV1Kjlw8ZvmfKwP0FpdjPzuKvRsQw==}
-    peerDependencies:
-      vue: '>=3.0.1'
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -3213,10 +3190,6 @@ snapshots:
       hono: 4.9.0
       zod: 3.23.8
 
-  '@internationalized/date@3.8.2':
-    dependencies:
-      '@swc/helpers': 0.5.17
-
   '@isaacs/fs-minipass@4.0.1':
     dependencies:
       minipass: 7.1.2
@@ -3419,10 +3392,6 @@ snapshots:
   '@sec-ant/readable-stream@0.4.1': {}
 
   '@sindresorhus/merge-streams@4.0.0': {}
-
-  '@swc/helpers@0.5.17':
-    dependencies:
-      tslib: 2.8.1
 
   '@tailwindcss/node@4.1.11':
     dependencies:
@@ -3791,10 +3760,6 @@ snapshots:
   chownr@1.1.4: {}
 
   chownr@3.0.0: {}
-
-  class-variance-authority@0.7.1:
-    dependencies:
-      clsx: 2.1.1
 
   cli-cursor@5.0.0:
     dependencies:
@@ -4300,10 +4265,6 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-vue-next@0.539.0(vue@3.5.18(typescript@5.8.3)):
-    dependencies:
-      vue: 3.5.18(typescript@5.8.3)
-
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.4
@@ -4721,7 +4682,8 @@ snapshots:
 
   tslib@2.3.0: {}
 
-  tslib@2.8.1: {}
+  tslib@2.8.1:
+    optional: true
 
   tsx@4.20.3:
     dependencies:

@@ -24,7 +24,7 @@ export function setupOpenAPI(app: Hono, prefix = "/openapi") {
 	app.get(
 		`${prefix}/ui`,
 		Scalar({
-			theme: "deepSpace",
+			theme: "kepler",
 			url: `${prefix}/spec`,
 		}),
 	);

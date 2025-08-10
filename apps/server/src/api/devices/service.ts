@@ -1,3 +1,4 @@
+import { isAfter, isValid, parseISO } from "date-fns";
 import { HTTPException } from "hono/http-exception";
 
 import {
@@ -27,5 +28,30 @@ export async function getSavingsByDeviceId(
 	startDate?: string,
 	endDate?: string,
 ) {
+	const parsedStartDate = startDate ? parseISO(startDate) : undefined;
+	const parsedEndDate = endDate ? parseISO(endDate) : undefined;
+
+	if (startDate && !isValid(parsedStartDate)) {
+		throw new HTTPException(400, {
+			message: "Invalid startDate format. Please use ISO 8601 format (YYYY-MM-DD)",
+		});
+	}
+
+	if (endDate && !isValid(parsedEndDate)) {
+		throw new HTTPException(400, {
+			message: "Invalid endDate format. Please use ISO 8601 format (YYYY-MM-DD)",
+		});
+	}
+
+	if (
+		parsedStartDate &&
+		parsedEndDate &&
+		isAfter(parsedStartDate, parsedEndDate)
+	) {
+		throw new HTTPException(400, {
+			message: "startDate cannot be after endDate",
+		});
+	}
+
 	return await dbFindDeviceSavingsByDeviceId(deviceId, startDate, endDate);
 }

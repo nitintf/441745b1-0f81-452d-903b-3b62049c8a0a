@@ -3,9 +3,9 @@ import type { CustomRouteConfig } from "@/utils/route";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
 
-import { DeviceSavingSchema, DeviceSchema } from "./schema";
+import { deviceSavingSchema, deviceSchema } from "./schema";
 
-export const GetAllDevicesOpenAPISchema: CustomRouteConfig = {
+export const getAllDevicesOpenAPISchema: CustomRouteConfig = {
 	tags: ["Devices"],
 	summary: "Get all devices",
 	description: "Retrieve a list of all devices",
@@ -14,14 +14,14 @@ export const GetAllDevicesOpenAPISchema: CustomRouteConfig = {
 			description: "List of devices",
 			content: {
 				"application/json": {
-					schema: resolver(z.array(DeviceSchema)),
+					schema: resolver(z.array(deviceSchema)),
 				},
 			},
 		},
 	},
 };
 
-export const GetDeviceByIdOpenAPISchema: CustomRouteConfig = {
+export const getDeviceByIdOpenAPISchema: CustomRouteConfig = {
 	tags: ["Devices"],
 	summary: "Get device by ID",
 	description: "Retrieve a specific device by its ID",
@@ -30,7 +30,7 @@ export const GetDeviceByIdOpenAPISchema: CustomRouteConfig = {
 			description: "Device details",
 			content: {
 				"application/json": {
-					schema: resolver(DeviceSchema),
+					schema: resolver(deviceSchema),
 				},
 			},
 		},
@@ -38,7 +38,7 @@ export const GetDeviceByIdOpenAPISchema: CustomRouteConfig = {
 	includeCommonErrors: ["404"],
 };
 
-export const GetSavingsByDeviceIdOpenAPISchema: CustomRouteConfig = {
+export const getSavingsByDeviceIdOpenAPISchema: CustomRouteConfig = {
 	tags: ["Device Savings"],
 	summary: "Get savings by device ID",
 	description: "Retrieve all saving records for a specific device",
@@ -63,7 +63,7 @@ export const GetSavingsByDeviceIdOpenAPISchema: CustomRouteConfig = {
 			description: "List of device saving records for the device",
 			content: {
 				"application/json": {
-					schema: resolver(z.array(DeviceSavingSchema)),
+					schema: resolver(z.array(deviceSavingSchema)),
 				},
 			},
 		},

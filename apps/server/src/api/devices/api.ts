@@ -4,23 +4,28 @@ import { Hono } from "hono";
 import { describeRoute } from "@/utils/route";
 
 import {
-	GetAllDevicesOpenAPISchema,
-	GetDeviceByIdOpenAPISchema,
-	GetSavingsByDeviceIdOpenAPISchema,
+	getAllDevicesOpenAPISchema,
+	getDeviceByIdOpenAPISchema,
+	getSavingsByDeviceIdOpenAPISchema,
 } from "./openapi";
-import { SavingsQuerySchema } from "./schema";
+import {
+	type SavingsParam,
+	type SavingsQuery,
+	savingsParamSchema,
+	savingsQuerySchema,
+} from "./schema";
 import { getAllDevices, getDeviceById, getSavingsByDeviceId } from "./service";
 
 export const devicesRouter = new Hono();
 
-devicesRouter.get("/", describeRoute(GetAllDevicesOpenAPISchema), async (c) => {
+devicesRouter.get("/", describeRoute(getAllDevicesOpenAPISchema), async (c) => {
 	const devices = await getAllDevices();
 	return c.json(devices);
 });
 
 devicesRouter.get(
 	"/:id",
-	describeRoute(GetDeviceByIdOpenAPISchema),
+	describeRoute(getDeviceByIdOpenAPISchema),
 	async (c) => {
 		try {
 			const id = Number(c.req.param("id"));
@@ -34,15 +39,16 @@ devicesRouter.get(
 
 devicesRouter.get(
 	"/:deviceId/savings",
-	describeRoute(GetSavingsByDeviceIdOpenAPISchema),
-	zValidator("query", SavingsQuerySchema),
+	describeRoute(getSavingsByDeviceIdOpenAPISchema),
+	zValidator("query", savingsQuerySchema),
+	zValidator("param", savingsParamSchema),
 	async (c) => {
-		const deviceId = Number(c.req.param("deviceId"));
-		const validated = c.req.valid("query");
+		const validatedParam = c.req.valid("param") as SavingsParam;
+		const validatedQuery = c.req.valid("query") as SavingsQuery;
 		const savings = await getSavingsByDeviceId(
-			deviceId,
-			validated.startDate,
-			validated.endDate,
+			validatedParam.deviceId,
+			validatedQuery.startDate,
+			validatedQuery.endDate,
 		);
 		return c.json(savings);
 	},

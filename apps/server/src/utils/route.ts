@@ -22,6 +22,7 @@ export function describeRoute(config: CustomRouteConfig) {
 		description,
 		responses,
 		includeCommonErrors = [],
+		...rest
 	} = config;
 
 	const finalResponses = { ...responses };
@@ -45,5 +46,6 @@ export function describeRoute(config: CustomRouteConfig) {
 		summary,
 		description,
 		responses: finalResponses,
+		...rest,
 	});
 }
